@@ -26,3 +26,5 @@ rating decimal(2,1) not null
 #To check if the table has created with required datatypes
 
 SELECT * FROM salesdata.sales;
+
+
