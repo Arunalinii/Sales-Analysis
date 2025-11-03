@@ -1,0 +1,97 @@
+---------------------- product-------------------
+------- How many unique product lines does the data have?
+
+select distinct product_line from salesdata.sales;
+
+select count(distinct product_line) from salesdata.sales;
+
+-------------- What is the most common payment method?
+
+select payment_method,count(payment_method) as count from sales
+group by payment_method
+order by count desc;
+
+---------- What is the most selling product line?
+
+select product_line, count(product_line) as sales_count from sales
+group by product_line
+order by sales_count desc;
+
+--------------- What is the total revenue by month?
+
+select month_name as month, sum(total) as revenue from sales
+group by month
+order by revenue desc;
+
+------------------- What month had the largest COGS?
+
+ select month_name as month, sum(cogs) as cogs from sales
+ group by month
+ order by cogs desc limit 1;
+
+-------------- What product line had the largest revenue?--------
+
+select product_line as product, sum(total) as revenue from sales
+group by product
+order by revenue desc;
+
+
+------------------- What is the city with the largest revenue?
+
+select city, sum(total) as revenue from sales
+group by city
+order by revenue desc;
+
+--------------- What product line had the largest VAT?
+
+select product_line as product, avg(vat) as vat from sales
+group by product
+order by vat desc ;
+
+
+--------------- Fetch each product line and add a column to those product line showing "Good", "Bad". Good if its greater than average sales
+
+select
+      avg(quantity) from sales as average;
+      
+select 
+     invoice_id,
+     product_line,
+     case 
+         when quantity > 6 then "Good"
+         else "Bad"
+	 end as remark
+from sales;
+      
+      
+---------- Which branch sold more products than average product sold?
+
+select branch, sum(quantity) as sum from sales
+group by branch
+having sum > (select avg(quantity) from sales) 
+;
+
+
+--------------------- What is the most common product line by gender
+
+select gender, product_line, count(gender) as count from sales
+group by gender, product_line
+order by count desc;
+
+---------------- What is the average rating of each product line?
+
+select product_line, avg(rating) as rating from sales 
+group by product_line;
+
+select product_line, round(avg(rating), 2) as rating from sales
+group by product_line
+order by rating desc;
+
+
+
+
+---------- Which customer type pays the most in VAT?
+
+select customer_type, sum(vat) as vat_percentage from sales
+group by customer_type
+order by vat_percentage desc;
