@@ -1,0 +1,35 @@
+-----------------------------------------------------------------------------
+---------------------- Sales ---------------------------------------------
+
+---------- Number of sales made in each time of the day per weekday
+
+select time_of_day, day_name, count(*) as Sales_made from sales
+group by day_name, time_of_day
+order by 
+		 case day_name
+          when 'Monday' then 1
+          when 'Tuesday' then 2
+          when 'Wednesday' then 3
+          when 'Thursday' then 4
+          when 'Friday' then 5
+          when 'Saturday' then 6
+          when 'Sunday' then 7
+		end,
+        case time_of_day
+        when 'Morning' then 1
+        when 'Afternoon' then 2
+        when 'Evening' then 3
+        end;
+        
+------------------ Which of the customer types brings the most revenue?
+
+select customer_type, sum(total) as revenue from sales
+group by customer_type
+order by revenue desc;
+
+-------------------- Which city has the largest tax percent/ VAT (Value Added Tax)?
+
+select city, sum(vat) as VAT_percentage from sales
+group by city
+order by VAT_percentage desc;
+
