@@ -1,0 +1,101 @@
+-------------------------------- Customer---------------------
+------------------- How many unique customer types does the data have?
+
+select count(distinct customer_type) as unique_cus from sales;
+
+select distinct customer_type as unique_cus from sales;
+
+
+----------------------- How many unique payment methods does the data have?
+
+select count(distinct payment_method) as unique_cus from sales;
+
+select distinct payment_method as unique_cus from sales;
+
+----------------- What is the most common customer type?
+
+select customer_type, count(customer_type) as count  from sales
+group by customer_type
+order by count desc;
+
+------------------- Which customer type buys the most?
+
+select customer_type, sum(total) as revenue from sales
+group by customer_type
+order by revenue desc;
+
+------------------ What is the gender of most of the customers?
+
+select gender, count(gender) as tot from sales
+group by gender
+order by tot desc
+;
+
+
+------------------- What is the gender distribution per branch?
+
+select branch, gender, count(gender) as tot from sales
+group by branch,gender
+order by branch,
+         case gender
+         when 'Male' then 1
+         else 2
+         end;
+         
+         
+------------------- Which time of the day do customers give most ratings?
+
+select time_of_day, sum(rating) as most_rating from sales
+group by time_of_day
+order by most_rating desc;
+
+
+-------------- Which time of the day do customers give most ratings per branch?
+
+with MostRating as(
+        select branch, time_of_day, sum(rating) as most_rating,
+        row_number() over(partition by branch order by sum(rating) desc) as ratng from sales
+        group by branch, time_of_day)
+        
+select branch, time_of_day, most_rating from MostRating
+where ratng = 1
+order by branch;
+        
+        
+select branch, time_of_day, sum(rating) as most_rating from sales
+group by branch, time_of_day
+order by branch, most_rating desc;
+
+-------------- Which day fo the week has the best avg ratings?
+
+select day_name, avg(rating) as best_rating from sales
+group by day_name
+order by best_rating desc;
+
+------------------------ Which day of the week has the best average ratings per branch?
+
+select branch, day_name, avg(rating) as best_rating from sales
+group by branch, day_name
+order by branch, best_rating desc;
+
+WITH RankedRatings AS (
+    SELECT 
+        branch,
+        day_name,
+        AVG(rating) AS best_rating,
+        ROW_NUMBER() OVER (
+            PARTITION BY branch 
+            ORDER BY AVG(rating) DESC
+        ) AS ranks
+    FROM sales
+    GROUP BY branch, day_name
+)
+
+SELECT 
+    branch,
+    day_name,
+    best_rating
+FROM RankedRatings
+WHERE ranks = 1
+ORDER BY branch;
+
